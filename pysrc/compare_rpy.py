@@ -35,6 +35,7 @@ class CompareRPY:
         self.got_first_truth = False
         self.got_new_msg = False
         ## parameter
+        self.erase_old_data = True
         self.interval = 0.1
         self.ylim = 45.0
         self.shown_size = 100
@@ -112,6 +113,7 @@ class CompareRPY:
             if self.got_new_msg:
                 self.updatePlot()
                 self.got_new_msg = False
+            self.drawPlot()
 
     def updatePlot(self):
         ## append
@@ -122,11 +124,12 @@ class CompareRPY:
         self.list_estimation_r.append(self.estimation.vector.x/math.pi*180.0)
         self.list_estimation_p.append(self.estimation.vector.y/math.pi*180.0)
         ## pop
-        self.list_t.pop(0)
-        self.list_truth_r.pop(0)
-        self.list_truth_p.pop(0)
-        self.list_estimation_r.pop(0)
-        self.list_estimation_p.pop(0)
+        if self.erase_old_data:
+            self.list_t.pop(0)
+            self.list_truth_r.pop(0)
+            self.list_truth_p.pop(0)
+            self.list_estimation_r.pop(0)
+            self.list_estimation_p.pop(0)
         ## roll
         plt.subplot(2,1,1)
         self.line_truth_r.set_xdata(self.list_t)
@@ -141,6 +144,8 @@ class CompareRPY:
         self.line_estimation_p.set_xdata(self.list_t)
         self.line_estimation_p.set_ydata(self.list_estimation_p)
         plt.xlim(min(self.list_t), max(self.list_t))
+
+    def drawPlot(self):
         ## draw
         plt.draw()
         plt.pause(self.interval)

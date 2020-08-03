@@ -23,7 +23,7 @@ class PlottingRPY:
         ## time
         self.start_time = time.time()
         ## flag
-        self.appended_new_msg = True
+        self.got_new_msg = False
         ## parameter
         self.interval = 0.1
         self.ylim = 45.0
@@ -36,7 +36,7 @@ class PlottingRPY:
 
     def callbackVector(self, msg):
         self.rpy = msg
-        self.appended_new_msg = False
+        self.got_new_msg = True
 
     def initializePlot(self):
         plt.ion()   #interactive mode on
@@ -64,9 +64,9 @@ class PlottingRPY:
 
     def mainLoop(self):
         while not rospy.is_shutdown():
-            if not self.appended_new_msg:
+            if self.got_new_msg:
                 self.updatePlot()
-                self.appended_new_msg = True
+                self.got_new_msg = False
 
     def updatePlot(self):
         ## append

@@ -17,6 +17,9 @@ class PlottingRPY:
         self.list_t = []
         self.list_r = []
         self.list_p = []
+        ## line
+        self.line_r = None
+        self.line_p = None
         ## time
         self.start_time = time.time()
         ## flag
@@ -27,7 +30,7 @@ class PlottingRPY:
         self.shown_size = 100
 
         ## initialization
-        self.line_r, self.line_p = self.initializePlot()
+        self.initializePlot()
         ## loop
         self.mainLoop()
 
@@ -49,7 +52,7 @@ class PlottingRPY:
         plt.ylabel("roll[deg]")
         plt.ylim(-self.ylim, self.ylim)
         plt.grid(True)
-        line_r, = plt.plot(self.list_t, self.list_r)   #get line
+        self.line_r, = plt.plot(self.list_t, self.list_r)   #get line
         ## pitch
         plt.subplot(2, 1, 2)
         # plt.title("pitch")
@@ -57,9 +60,7 @@ class PlottingRPY:
         plt.ylabel("pitch[deg]")
         plt.ylim(-self.ylim, self.ylim)
         plt.grid(True)
-        line_p, = plt.plot(self.list_t, self.list_p)   #get line
-
-        return line_r, line_p
+        self.line_p, = plt.plot(self.list_t, self.list_p)   #get line
 
     def mainLoop(self):
         while not rospy.is_shutdown():

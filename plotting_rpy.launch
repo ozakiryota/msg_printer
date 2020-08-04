@@ -1,0 +1,15 @@
+<launch>
+	<!-- global rosparam -->
+	<param name="use_sim_time" value="true"/>
+
+	<!-- rosbag -->
+	<node pkg="rosbag" type="play" name="player" args="--clock /home/amsl/ozaki/docker_ws/airsim_ros_wrapper/bagfiles/drone_1cam.bag"/>
+
+	<!-- msg_conversion -->
+	<node pkg="msg_conversion" type="odometry_to_rpy" name="odometry_to_rpy" output="screen">
+		<remap from="/odom" to="/airsim_node/drone/odom_local_ned"/>
+	</node>
+
+	<!-- MAIN -->
+	<node pkg="msg_printer" name="plotting_rpy" type="plotting_rpy.py" output="screen"/>
+</launch>

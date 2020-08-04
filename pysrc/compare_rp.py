@@ -6,9 +6,11 @@ from geometry_msgs.msg import Vector3Stamped
 import math
 import time
 import matplotlib.pyplot as plt
+import numpy as np
 
 class CompareRPY:
     def __init__(self):
+        print("--- compare_rpy ---")
         ## subscriber
         self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth)
         self.sub_estimation = rospy.Subscriber("/estimation/rpy", Vector3Stamped, self.callbackEstimation)
@@ -24,6 +26,7 @@ class CompareRPY:
         self.list_truth_p = []
         self.list_estimation_r = []
         self.list_estimation_p = []
+        self.list_error_rp = []
         ## line
         self.line_truth_r = None
         self.line_truth_p = None
@@ -35,7 +38,8 @@ class CompareRPY:
         self.got_first_truth = False
         self.got_new_msg = False
         ## parameter
-        self.erase_old_data = True
+        self.erase_old_data = rospy.get_param("/erase_old_data", True)
+        print("self.erase_old_data = ", self.erase_old_data)
         self.interval = 0.1
         self.ylim = 45.0
         self.shown_size = 100
@@ -69,6 +73,12 @@ class CompareRPY:
             self.truth.vector.z,
             self.estimation.vector.z
         )
+        ## append
+        self.list_error_rp.append([self.error.vector.x, self.error.vector.y])
+        ## print
+        arr_error_rp = np.array(self.list_error_rp)
+        print("arr_error_rp.shape = ", arr_error_rp.shape)
+        print("arr_error_rp.mean(axis=0) = ", arr_error_rp.mean(axis=0))
     
     def computeAngleDiff(self, x, y):
         diff = math.atan2(math.sin(x - y), math.cos(x - y))

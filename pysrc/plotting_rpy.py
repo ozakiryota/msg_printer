@@ -43,7 +43,7 @@ class PlottingRPY:
     def initializePlot(self):
         plt.ion()   #interactive mode on
         plt.figure()
-        ## empty
+        ## empty list
         self.list_t = [0 for i in range(self.shown_size)]
         self.list_r = [0 for i in range(self.shown_size)]
         self.list_p = [0 for i in range(self.shown_size)]

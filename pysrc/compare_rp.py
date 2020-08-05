@@ -104,7 +104,7 @@ class CompareRPY:
         plt.ylabel("roll[deg]")
         plt.ylim(-self.ylim, self.ylim)
         plt.grid(True)
-        self.line_truth_r, = plt.plot(self.list_t, self.list_truth_r, label="GT")   #get line
+        self.line_truth_r, = plt.plot(self.list_t, self.list_truth_r, label="Truth")   #get line
         self.line_estimation_r, = plt.plot(self.list_t, self.list_estimation_r, label="Est.")   #get line
         plt.legend()
         ## pitch
@@ -114,7 +114,7 @@ class CompareRPY:
         plt.ylabel("pitch[deg]")
         plt.ylim(-self.ylim, self.ylim)
         plt.grid(True)
-        self.line_truth_p, = plt.plot(self.list_t, self.list_truth_p, label="GT")   #get line
+        self.line_truth_p, = plt.plot(self.list_t, self.list_truth_p, label="Truth")   #get line
         self.line_estimation_p, = plt.plot(self.list_t, self.list_estimation_p, label="Est.")   #get line
         plt.legend()
 

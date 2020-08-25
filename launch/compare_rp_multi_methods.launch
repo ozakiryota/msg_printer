@@ -1,0 +1,38 @@
+<launch>
+	<!-- global rosparam -->
+	<param name="use_sim_time" value="true"/>
+
+	<!-- rosbag -->
+	<node pkg="rosbag" type="play" name="player" args="--clock /home/amsl/ozaki/bagfiles/sq2/indoor_dkan/2018-05-08-19-45-05.bag"/>
+
+	<!-- rviz -->
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find msg_printer)/rviz_config/compare_rp.rviz"/>
+
+	<!-- comparative approaches -->
+	<node pkg="gyrodometry" type="gyrodometry3d" name="gyrodometry3d">
+		<param name="wait_inipose" type="bool" value="false"/>
+	</node>
+
+	<!-- msg conversion -->
+	<node pkg="msg_conversion" type="imu_to_rpy" name="imu_to_rpy">
+		<remap from="/rpy" to="/imu/rpy"/>
+	</node>
+	<node pkg="msg_conversion" type="odometry_to_rpy" name="odometry_to_rpy">
+		<remap from="/rpy" to="/odom/rpy"/>
+	</node>
+	<node pkg="msg_conversion" type="odometry_to_rpy" name="gyrodometry_to_rpy">
+		<remap from="/odom" to="/gyrodometry"/>
+		<remap from="/rpy" to="/gyrodometry/rpy"/>
+	</node>
+
+	<!-- main -->
+	<param name="erase_old_data" type="bool" value="False"/>
+	<param name="/num_sub" type="int" value="2"/>
+	<param name="/method0" type="str" value="Odom."/>
+	<param name="/method1" type="str" value="Gyro."/>
+	<node pkg="msg_printer" type="compare_rp_multi_methods.py" name="compare_rp_multi_methods" output="screen">
+		<remap from="/truth/rpy" to="/imu/rpy"/>
+		<remap from="/estimation0/rpy" to="/odom/rpy"/>
+		<remap from="/estimation1/rpy" to="/gyrodometry/rpy"/>
+	</node>
+</launch>

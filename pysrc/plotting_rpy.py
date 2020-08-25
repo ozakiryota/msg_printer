@@ -50,7 +50,7 @@ class PlottingRPY:
         self.list_y = [0 for i in range(self.shown_size)]
         ## roll
         plt.subplot(3, 1, 1)
-        # plt.title("roll")
+        plt.title("roll")
         plt.xlabel("time[s]")
         plt.ylabel("roll[deg]")
         plt.ylim(-self.ylim, self.ylim)
@@ -58,7 +58,7 @@ class PlottingRPY:
         self.line_r, = plt.plot(self.list_t, self.list_r)   #get line
         ## pitch
         plt.subplot(3, 1, 2)
-        # plt.title("pitch")
+        plt.title("pitch")
         plt.xlabel("time[s]")
         plt.ylabel("pitch[deg]")
         plt.ylim(-self.ylim, self.ylim)
@@ -66,12 +66,14 @@ class PlottingRPY:
         self.line_p, = plt.plot(self.list_t, self.list_p)   #get line
         ## yaw
         plt.subplot(3, 1, 3)
-        # plt.title("yaw")
+        plt.title("yaw")
         plt.xlabel("time[s]")
         plt.ylabel("yaw[deg]")
         plt.ylim(-self.ylim, self.ylim)
         plt.grid(True)
         self.line_y, = plt.plot(self.list_t, self.list_y)   #get line
+        ## layout
+        plt.tight_layout()
 
     def mainLoop(self):
         while not rospy.is_shutdown():

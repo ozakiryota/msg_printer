@@ -12,8 +12,8 @@ class CompareRPY:
     def __init__(self):
         print("--- compare_rpy ---")
         ## subscriber
-        self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth)
-        self.sub_estimation = rospy.Subscriber("/estimation/rpy", Vector3Stamped, self.callbackEstimation)
+        self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth, queue_size=1)
+        self.sub_estimation = rospy.Subscriber("/estimation/rpy", Vector3Stamped, self.callbackEstimation, queue_size=1)
         ## publisher
         self.pub_error = rospy.Publisher("/error/rpy", Vector3Stamped, queue_size=1)
         ## msg
@@ -78,11 +78,14 @@ class CompareRPY:
         ## print
         arr_error_rp = np.array(self.list_error_rp)
         print("arr_error_rp.shape = ", arr_error_rp.shape)
-        print("arr_error_rp.mean(axis=0) = ", arr_error_rp.mean(axis=0))
+        print("MAE[deg]: ", self.computeMAE(arr_error_rp)/math.pi*180.0)
     
     def computeAngleDiff(self, x, y):
         diff = math.atan2(math.sin(x - y), math.cos(x - y))
         return diff
+
+    def computeMAE(self, x):
+        return np.mean(np.abs(x), axis=0)
 
     def publication(self):
         self.error.header = self.estimation.header
@@ -147,6 +150,7 @@ class CompareRPY:
         self.line_estimation_r.set_xdata(self.list_t)
         self.line_estimation_r.set_ydata(self.list_estimation_r)
         plt.xlim(min(self.list_t), max(self.list_t))
+        plt.title("MAE[deg]: " + "{:.3f}".format(self.computeMAE(np.array(self.list_error_rp))[0]/math.pi*180.0))
         ## pitch
         plt.subplot(2,1,2)
         self.line_truth_p.set_xdata(self.list_t)
@@ -154,8 +158,11 @@ class CompareRPY:
         self.line_estimation_p.set_xdata(self.list_t)
         self.line_estimation_p.set_ydata(self.list_estimation_p)
         plt.xlim(min(self.list_t), max(self.list_t))
+        plt.title("MAE[deg]: " + "{:.3f}".format(self.computeMAE(np.array(self.list_error_rp))[1]/math.pi*180.0))
 
     def drawPlot(self):
+        ## layout
+        plt.tight_layout()
         ## draw
         plt.draw()
         plt.pause(self.interval)

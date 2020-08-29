@@ -194,7 +194,7 @@ class CompareRPY:
         plt.xlim(min(self.list_t), max(self.list_t))
         title_p = "MAE[deg]: "
         for method_idx in range(self.num_sub):
-            title_p = title_p + self.list_method_name[method_idx] + " {:.3f} ".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[0]/math.pi*180.0)
+            title_p = title_p + self.list_method_name[method_idx] + " {:.3f} ".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[1]/math.pi*180.0)
         plt.title(title_p)
 
     def drawPlot(self):

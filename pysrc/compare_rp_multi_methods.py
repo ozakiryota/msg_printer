@@ -24,6 +24,8 @@ class CompareRPY:
         self.interval = 0.1
         self.ylim = 45.0
         self.shown_size = 100
+        if not self.erase_old_data:
+            self.shown_size = 1
         ## subscriber
         self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth, queue_size=1)
         self.list_sub = []

@@ -23,9 +23,9 @@ class CompareRPY:
         print("self.list_method_name = ", self.list_method_name)
         self.interval = 0.1
         self.ylim = 45.0
-        self.shown_size = 100
+        self.ini_shown_size = 100
         if not self.erase_old_data:
-            self.shown_size = 1
+            self.ini_shown_size = 1
         ## subscriber
         self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth, queue_size=1)
         self.list_sub = []
@@ -119,12 +119,12 @@ class CompareRPY:
         plt.ion()   #interactive mode on
         plt.figure()
         ## empty
-        self.list_t = [0 for _ in range(self.shown_size)]
-        self.list_truth_r = [0 for _ in range(self.shown_size)]
-        self.list_truth_p = [0 for _ in range(self.shown_size)]
+        self.list_t = [0 for _ in range(self.ini_shown_size)]
+        self.list_truth_r = [0 for _ in range(self.ini_shown_size)]
+        self.list_truth_p = [0 for _ in range(self.ini_shown_size)]
         for method_idx in range(self.num_sub):
-            self.list_list_estimation_r[method_idx] = [0 for _ in range(self.shown_size)]
-            self.list_list_estimation_p[method_idx] = [0 for _ in range(self.shown_size)]
+            self.list_list_estimation_r[method_idx] = [0 for _ in range(self.ini_shown_size)]
+            self.list_list_estimation_p[method_idx] = [0 for _ in range(self.ini_shown_size)]
         ## roll
         plt.subplot(2, 1, 1)
         # plt.title("roll")

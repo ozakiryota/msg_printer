@@ -21,11 +21,14 @@ class CompareRPY:
             method_name = rospy.get_param("/method" + str(method_idx), "method" + str(method_idx))
             self.list_method_name.append(method_name)
         print("self.list_method_name = ", self.list_method_name)
-        self.interval = 0.1
-        self.ylim = 45.0
-        self.ini_shown_size = 100
+        self.interval = rospy.get_param("/interval", 0.1)
+        print("self.interval = ", self.interval)
+        self.ylim = rospy.get_param("/ylim", 45.0)
+        print("self.ylim = ", self.ylim)
+        self.ini_shown_size = rospy.get_param("/ini_shown_size", 100)
         if not self.erase_old_data:
             self.ini_shown_size = 1
+        print("self.ini_shown_size = ", self.ini_shown_size)
         ## subscriber
         self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth, queue_size=1)
         self.list_sub = []

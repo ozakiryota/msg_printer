@@ -11,9 +11,22 @@ import numpy as np
 class CompareRPY:
     def __init__(self):
         print("--- compare_rpy ---")
-        ## parameter
+        ## parameter-graph
         self.erase_old_data = rospy.get_param("/erase_old_data", True)
         print("self.erase_old_data = ", self.erase_old_data)
+        self.ini_shown_size = rospy.get_param("/ini_shown_size", 100)
+        if not self.erase_old_data:
+            self.ini_shown_size = 1
+        print("self.ini_shown_size = ", self.ini_shown_size)
+        self.fix_ylim = rospy.get_param("/fix_ylim", False)
+        print("self.fix_ylim = ", self.fix_ylim)
+        self.ylim = rospy.get_param("/ylim", 45.0)
+        print("self.ylim = ", self.ylim)
+        self.axis_resolution = rospy.get_param("/axis_resolution", 10.0)
+        print("self.axis_resolution = ", self.axis_resolution)
+        self.interval = rospy.get_param("/interval", 0.1)
+        print("self.interval = ", self.interval)
+        ## parameter-method
         self.num_sub = rospy.get_param("/num_sub", 1)
         print("self.num_sub = ", self.num_sub)
         self.list_method_name = []
@@ -21,14 +34,6 @@ class CompareRPY:
             method_name = rospy.get_param("/method" + str(method_idx), "method" + str(method_idx))
             self.list_method_name.append(method_name)
         print("self.list_method_name = ", self.list_method_name)
-        self.interval = rospy.get_param("/interval", 0.1)
-        print("self.interval = ", self.interval)
-        self.ylim = rospy.get_param("/ylim", 45.0)
-        print("self.ylim = ", self.ylim)
-        self.ini_shown_size = rospy.get_param("/ini_shown_size", 100)
-        if not self.erase_old_data:
-            self.ini_shown_size = 1
-        print("self.ini_shown_size = ", self.ini_shown_size)
         ## subscriber
         self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth, queue_size=1)
         self.list_sub = []
@@ -87,16 +92,16 @@ class CompareRPY:
     
     def computeError(self, method_idx):
         self.list_error_msg[method_idx].vector.x = self.computeAngleDiff(
-            self.truth_msg.vector.x,
-            self.list_estimation_msg[method_idx].vector.x
+            self.list_estimation_msg[method_idx].vector.x,
+            self.truth_msg.vector.x
         )
         self.list_error_msg[method_idx].vector.y = self.computeAngleDiff(
-            self.truth_msg.vector.y,
-            self.list_estimation_msg[method_idx].vector.y
+            self.list_estimation_msg[method_idx].vector.y,
+            self.truth_msg.vector.y
         )
         self.list_error_msg[method_idx].vector.z = self.computeAngleDiff(
-            self.truth_msg.vector.z,
-            self.list_estimation_msg[method_idx].vector.z
+            self.list_estimation_msg[method_idx].vector.z,
+            self.truth_msg.vector.z
         )
         ## append
         self.list_list_error_rp[method_idx].append([self.list_error_msg[method_idx].vector.x, self.list_error_msg[method_idx].vector.y])
@@ -179,27 +184,47 @@ class CompareRPY:
                 self.list_list_estimation_p[method_idx].pop(0)
         ## roll
         plt.subplot(2,1,1)
+        ## roll-data
         self.line_truth_r.set_xdata(self.list_t)
         self.line_truth_r.set_ydata(self.list_truth_r)
         for method_idx in range(self.num_sub):
             self.list_line_estimation_r[method_idx].set_xdata(self.list_t)
             self.list_line_estimation_r[method_idx].set_ydata(self.list_list_estimation_r[method_idx])
+        ## roll-axis
         plt.xlim(min(self.list_t), max(self.list_t))
-        title_r = "MAE[deg]: "
+        if not self.fix_ylim:
+            all_r = self.list_truth_r
+            for method_idx in range(self.num_sub):
+                all_r= all_r + self.list_list_estimation_r[method_idx]
+            plt.ylim(min(all_r), max(all_r))
+        ## roll-title
+        title_r = "MAE|NowErr[deg]:"
         for method_idx in range(self.num_sub):
-            title_r = title_r + self.list_method_name[method_idx] + " {:.3f} ".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[0]/math.pi*180.0)
+            title_r = title_r + " " + self.list_method_name[method_idx] \
+                + "{:.3f}".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[0]/math.pi*180.0) \
+                + "|{:.3f}".format(self.list_list_error_rp[method_idx][-1][0]/math.pi*180.0)
         plt.title(title_r)
         ## pitch
         plt.subplot(2,1,2)
+        ## pitch-data
         self.line_truth_p.set_xdata(self.list_t)
         self.line_truth_p.set_ydata(self.list_truth_p)
         for method_idx in range(self.num_sub):
             self.list_line_estimation_p[method_idx].set_xdata(self.list_t)
             self.list_line_estimation_p[method_idx].set_ydata(self.list_list_estimation_p[method_idx])
+        ## pitch-axis
         plt.xlim(min(self.list_t), max(self.list_t))
-        title_p = "MAE[deg]: "
+        if not self.fix_ylim:
+            all_p = self.list_truth_p
+            for method_idx in range(self.num_sub):
+                all_p = all_p + self.list_list_estimation_p[method_idx]
+            plt.ylim(min(all_p), max(all_p))
+        ## pitch-title
+        title_p = "MAE|NowErr[deg]:"
         for method_idx in range(self.num_sub):
-            title_p = title_p + self.list_method_name[method_idx] + " {:.3f} ".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[1]/math.pi*180.0)
+            title_p = title_p + " " + self.list_method_name[method_idx] \
+                + "{:.3f}".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[1]/math.pi*180.0) \
+                + "|{:.3f}".format(self.list_list_error_rp[method_idx][-1][1]/math.pi*180.0)
         plt.title(title_p)
 
     def drawPlot(self):

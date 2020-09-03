@@ -8,6 +8,9 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
+import os
+import csv
+
 class CompareRPY:
     def __init__(self):
         print("--- compare_rpy ---")
@@ -34,6 +37,11 @@ class CompareRPY:
             method_name = rospy.get_param("/method" + str(method_idx), "method" + str(method_idx))
             self.list_method_name.append(method_name)
         print("self.list_method_name = ", self.list_method_name)
+        ## parameter-csv
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        csv_path = rospy.get_param("/csv_path", current_dir + "/../save/data.csv")
+        self.csv_file = open(csv_path, "w")
+        print("csv_path = ", csv_path)
         ## subscriber
         self.sub_truth = rospy.Subscriber("/truth/rpy", Vector3Stamped, self.callbackTruth, queue_size=1)
         self.list_sub = []
@@ -81,7 +89,9 @@ class CompareRPY:
 
     def callbackTruth(self, msg):
         self.truth_msg = msg
-        self.got_first_truth = True
+        if not self.got_first_truth:
+            self.start_time = time.time()
+            self.got_first_truth = True
 
     def callbackEstimation(self, msg, method_idx):
         self.list_estimation_msg[method_idx] = msg
@@ -162,6 +172,7 @@ class CompareRPY:
         while not rospy.is_shutdown():
             if self.got_new_msg:
                 self.updatePlot()
+                self.writeCSV()
                 self.got_new_msg = False
             self.drawPlot()
 
@@ -226,6 +237,14 @@ class CompareRPY:
                 + "{:.3f}".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[1]/math.pi*180.0) \
                 + "|{:.3f}".format(self.list_list_error_rp[method_idx][-1][1]/math.pi*180.0)
         plt.title(title_p)
+
+    def writeCSV(self):
+        writer = csv.writer(self.csv_file)
+        row = [self.list_t[-1], self.list_truth_r[-1], self.list_truth_p[-1]]
+        for method_idx in range(self.num_sub):
+            row = row + [self.list_list_estimation_r[method_idx][-1], self.list_list_estimation_p[method_idx][-1]]  #rp
+            row = row + [self.list_list_error_rp[method_idx][-1][0], self.list_list_error_rp[method_idx][-1][1]]  #error_rp
+        writer.writerow(row)
 
     def drawPlot(self):
         ## layout

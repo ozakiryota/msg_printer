@@ -87,6 +87,7 @@ class CompareRPY:
 
         ## initialization
         self.initializePlot()
+        self.initializeCSV()
         ## loop
         self.mainLoop()
 
@@ -170,6 +171,14 @@ class CompareRPY:
             line_estimation_p, = plt.plot(self.list_t, self.list_list_estimation_p[method_idx], label=self.list_method_name[method_idx])   #get line
             self.list_line_estimation_p.append(line_estimation_p)
         plt.legend()
+
+    def initializeCSV(self):
+        writer = csv.writer(self.csv_file)
+        row = ["time", "Truth_r", "Truth_p"]
+        for method_idx in range(self.num_sub):
+            row = row + [self.list_method_name[method_idx] + "_r", self.list_method_name[method_idx] + "_p"]
+            row = row + ["E_" + self.list_method_name[method_idx] + "_r", "E_" + self.list_method_name[method_idx] + "_p"]
+        writer.writerow(row)
 
     def mainLoop(self):
         while not rospy.is_shutdown():

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(msg_printer)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -O2 -g -Wall)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -192,3 +192,6 @@ include_directories(
 # catkin_add_nosetests(test)
 add_executable(odometry_printer src/odometry_printer.cpp)
 target_link_libraries(odometry_printer ${catkin_LIBRARIES})
+#
+add_executable(record_sub_timing src/record_sub_timing.cpp)
+target_link_libraries(record_sub_timing ${catkin_LIBRARIES})

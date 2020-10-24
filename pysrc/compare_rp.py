@@ -158,7 +158,7 @@ class CompareRPY:
         title_r = "NowR[deg]:"
         for method_idx in range(self.num_sub):
             title_r = title_r + " " + self.list_method_name[method_idx] \
-                + "{:.3f}".format(self.list_list_estimation_p[method_idx][-1])
+                + "{:.3f}".format(self.list_list_estimation_r[method_idx][-1])
         plt.title(title_r)
         ## pitch
         plt.subplot(2,1,2)

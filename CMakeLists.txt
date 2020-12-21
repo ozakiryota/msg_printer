@@ -195,3 +195,6 @@ target_link_libraries(odometry_printer ${catkin_LIBRARIES})
 #
 add_executable(record_sub_timing src/record_sub_timing.cpp)
 target_link_libraries(record_sub_timing ${catkin_LIBRARIES})
+#
+add_executable(visualize_subscribed_text_rviz src/visualize_subscribed_text_rviz.cpp)
+target_link_libraries(visualize_subscribed_text_rviz ${catkin_LIBRARIES})

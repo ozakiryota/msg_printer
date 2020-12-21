@@ -38,13 +38,16 @@ class CompareRPY:
             self.list_method_name.append(method_name)
         print("self.list_method_name = ", self.list_method_name)
         ## parameter-csv
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_name = "rp"
-        for method_idx in range(self.num_sub):
-            csv_name = csv_name + "_" + self.list_method_name[method_idx]
-        csv_path = rospy.get_param("/csv_path", current_dir + "/../save/" + csv_name + ".csv")
-        self.csv_file = open(csv_path, "w")
-        print("csv_path = ", csv_path)
+        self.save_csv = rospy.get_param("/save_csv", True)
+        print("self.save_csv = ", self.save_csv)
+        if self.save_csv:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            csv_name = "rp"
+            for method_idx in range(self.num_sub):
+                csv_name = csv_name + "_" + self.list_method_name[method_idx]
+            csv_path = rospy.get_param("/csv_path", current_dir + "/../save/" + csv_name + ".csv")
+            self.csv_file = open(csv_path, "w")
+            print("csv_path = ", csv_path)
         ## subscriber
         self.list_sub = []
         for method_idx in range(self.num_sub):
@@ -71,7 +74,8 @@ class CompareRPY:
         self.got_new_msg = False
         ## initialization
         self.initializePlot()
-        self.initializeCSV()
+        if self.save_csv:
+            self.initializeCSV()
         ## loop
         self.mainLoop()
 
@@ -124,7 +128,8 @@ class CompareRPY:
         while not rospy.is_shutdown():
             if self.got_new_msg:
                 self.updatePlot()
-                self.writeCSV()
+                if self.save_csv:
+                    self.writeCSV()
                 self.got_new_msg = False
             self.drawPlot()
 

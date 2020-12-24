@@ -25,8 +25,6 @@ class CompareRPY:
         print("self.fix_ylim = ", self.fix_ylim)
         self.ylim = rospy.get_param("/ylim", 45.0)
         print("self.ylim = ", self.ylim)
-        self.axis_resolution = rospy.get_param("/axis_resolution", 10.0)
-        print("self.axis_resolution = ", self.axis_resolution)
         self.interval = rospy.get_param("/interval", 0.1)
         print("self.interval = ", self.interval)
         ## parameter-method

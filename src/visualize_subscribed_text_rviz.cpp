@@ -16,6 +16,8 @@ class VisualizeSubscribedTextRviz{
 		/*parameter*/
 		std::string _frame_id;
 		double _position_x, _position_y, _position_z;
+		double _scale;
+		double _color_r, _color_b, _color_g, _color_a;
 		double _lifetime_sec;
 
 	public:
@@ -39,6 +41,16 @@ VisualizeSubscribedTextRviz::VisualizeSubscribedTextRviz()
 	std::cout << "_position_y = " << _position_y << std::endl;
 	_nhPrivate.param("position_z", _position_z, 0.0);
 	std::cout << "_position_z = " << _position_z << std::endl;
+	_nhPrivate.param("scale", _scale, 1.0);
+	std::cout << "_scale = " << _scale << std::endl;
+	_nhPrivate.param("color_r", _color_r, 0.0);
+	std::cout << "_color_r = " << _color_r << std::endl;
+	_nhPrivate.param("color_g", _color_g, 0.0);
+	std::cout << "_color_g = " << _color_g << std::endl;
+	_nhPrivate.param("color_b", _color_b, 0.0);
+	std::cout << "_color_b = " << _color_b << std::endl;
+	_nhPrivate.param("color_a", _color_a, 1.0);
+	std::cout << "_color_a = " << _color_a << std::endl;
 	_nhPrivate.param("lifetime_sec", _lifetime_sec, 0.1);
 	std::cout << "_lifetime_sec = " << _lifetime_sec << std::endl;
 	/*subscriber*/
@@ -59,11 +71,11 @@ void VisualizeSubscribedTextRviz::initializeVisMarker(void)
 	_text.pose.position.x = _position_x;
 	_text.pose.position.y = _position_y;
 	_text.pose.position.z = _position_z;
-	_text.scale.z = 1.0;
-	_text.color.r = 1.0;
-	_text.color.g = 0.0;
-	_text.color.b = 1.0;
-	_text.color.a = 1.0;
+	_text.scale.z = _scale;
+	_text.color.r = _color_r;
+	_text.color.g = _color_g;
+	_text.color.b = _color_b;
+	_text.color.a = _color_a;
 	_text.lifetime = ros::Duration(_lifetime_sec);
 }
 

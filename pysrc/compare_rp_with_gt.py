@@ -116,7 +116,7 @@ class CompareRPY:
             self.truth_msg.vector.z
         )
         ## append
-        self.list_list_error_rp[method_idx].append([self.list_error_msg[method_idx].vector.x, self.list_error_msg[method_idx].vector.y])
+        self.list_list_error_rp[method_idx].append([self.list_error_msg[method_idx].vector.x/math.pi*180.0, self.list_error_msg[method_idx].vector.y/math.pi*180.0])
         ## print
         # print("---", self.list_method_name[method_idx], "---")
         # arr_error_rp = np.array(self.list_list_error_rp[method_idx])
@@ -222,8 +222,8 @@ class CompareRPY:
         title_r = "MAE|NowErr[deg]:"
         for method_idx in range(self.num_sub):
             title_r = title_r + " " + self.list_method_name[method_idx] \
-                + "{:.3f}".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[0]/math.pi*180.0) \
-                + "|{:.3f}".format(self.list_list_error_rp[method_idx][-1][0]/math.pi*180.0)
+                + "{:.3f}".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[0]) \
+                + "|{:.3f}".format(self.list_list_error_rp[method_idx][-1][0])
         plt.title(title_r)
         ## pitch
         plt.subplot(2,1,2)
@@ -244,8 +244,8 @@ class CompareRPY:
         title_p = "MAE|NowErr[deg]:"
         for method_idx in range(self.num_sub):
             title_p = title_p + " " + self.list_method_name[method_idx] \
-                + "{:.3f}".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[1]/math.pi*180.0) \
-                + "|{:.3f}".format(self.list_list_error_rp[method_idx][-1][1]/math.pi*180.0)
+                + "{:.3f}".format(self.computeMAE(np.array(self.list_list_error_rp[method_idx]))[1]) \
+                + "|{:.3f}".format(self.list_list_error_rp[method_idx][-1][1])
         plt.title(title_p)
 
     def writeCSV(self):

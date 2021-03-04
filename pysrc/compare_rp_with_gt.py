@@ -81,6 +81,7 @@ class CompareRPY:
         self.start_time = time.time()
         ## flag
         self.got_first_truth = False
+        self.got_first_est = False
         self.got_new_msg = False
 
         ## initialization
@@ -180,11 +181,19 @@ class CompareRPY:
 
     def mainLoop(self):
         while not rospy.is_shutdown():
-            if self.got_new_msg:
+            if not self.got_first_est:
+                self.got_first_est = self.gotFirstMsg()
+            if self.got_first_est and self.got_new_msg:
                 self.updatePlot()
                 self.writeCSV()
                 self.got_new_msg = False
             self.drawPlot()
+
+    def gotFirstMsg(self):
+        for method_idx in range(self.num_sub):
+            if len(self.list_list_error_rp[method_idx]) == 0:
+                return False
+            return True
 
     def updatePlot(self):
         ## append
